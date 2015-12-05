@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html ng-app="app">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <meta http-equiv="Content-Security-Policy"/>
+        <link rel="stylesheet" type="text/css" href="plugins/bootstrap/bootstrap-paper.min.css" />
+        <link rel="stylesheet" type="text/css" href="plugins/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Projeto 1</title>
+    </head>
+    <body>
+
+
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-10">
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#">Controle de Combustível</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="nav navbar-nav navbar-right">
+                            <!-- <li><a  class="btn btn-success">Link</a></li> -->
+                            <a ui-sref="adicionaGasto" class="btn-custom"><i class="fa fa-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <section>
+            <div ui-view></div>
+        </section>
+
+
+
+
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="plugins/angular/angular.js"></script>
+        <script type="text/javascript" src="plugins/angular/angular-resource.js"></script>
+        <script type="text/javascript" src="plugins/ui-router/release/angular-ui-router.js"></script>
+        <script type="text/javascript" src="plugins/ng-cordova/dist/ng-cordova.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+
+
+        <!-- APP -->
+        <script type="text/javascript" src="app.js"></script>
+
+        <script type="text/javascript" src="plugins/ng-cordova/dist/ng-cordova.js"></script>
+
+        <!-- CONTROLLERS -->
+        <script type="text/javascript" src="js/controllers/adicionaGastoCtrl.js"></script>
+
+
+    </body>
+</html>
