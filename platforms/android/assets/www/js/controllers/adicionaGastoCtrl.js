@@ -1,5 +1,47 @@
-function adicionaGastoCtrl($scope, $rootScope, $state){
+app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state){
 
+    $scope.addItem = function(item){
+        //console.log("item");
+        //console.log(item);
+        if (typeof arrayGastos === "undefined") {
+
+            item.id = 1;
+            arrayGastos = [item];
+        }else{
+            item.id = arrayGastos.length + 1;
+            arrayGastos.push(item);
+        }
+
+        salvaGastos(arrayGastos);
+    }
+
+    function salvaGastos(arrayGastos){
+        console.log("gastos 1");
+        console.log(arrayGastos);
+        gastos = {"list": arrayGastos};
+
+        console.log("gastos");
+        console.log(JSON.stringify(gastos));
+        var gastoConvertido = JSON.stringify(gastos);
+        db.transaction(function(tx) {
+
+            tx.executeSql("INSERT INTO gastos (data) VALUES (?)", [gastoConvertido], successCB, errorCB)
+        });
+    }
+
+    function errorCB(err) {
+        alert("Error processing SQL: "+err.message);
+    }
+
+    function successCB(tx, results) {
+        tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
+                console.log("res.rows.length: " + res.rows.length + " -- should be 1");
+                alert("res.rows.item(0).data_num: " + res.rows.item(0).data + " -- should be 100");
+              });
+    }
+
+    /*
+    CRUD COM LOCAL STORAGE
     $scope.gasto = {};
     $scope.listaGastos = angular.fromJson(window.localStorage['listaGastos']);
 
@@ -67,7 +109,7 @@ function adicionaGastoCtrl($scope, $rootScope, $state){
              console.log("insertId: " + res.insertId + " -- probably 1");
              console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
 
-            
+
 
            }, function(e) {
              console.log("ERROR: " + e.message);
@@ -75,5 +117,5 @@ function adicionaGastoCtrl($scope, $rootScope, $state){
          });
     }
 
-
-}
+    */
+});
