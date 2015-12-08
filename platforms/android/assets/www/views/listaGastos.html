@@ -1,7 +1,10 @@
-<div class="container">
+<div class="container" ng-init="getInit()">
     <div class="col-lg-12">
         <h5>Todos os Gastos</h5>
-        <table class="table">
+        <div class="pull-right">
+            <a ng-click="limparGastos()" class="btn btn-primary btn-sm">Limpar</a>
+        </div>
+        <table class="table" id="tableGasto" hidden>
             <thead>
                 <tr>
                     <td> Data</td>
@@ -11,8 +14,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr  ng-repeat="item in listaGastos">
-                    <td>{{item.date | date: "yyyy-MM-dd"}}</td>
+                <tr ng-repeat="item in listaGastos.list" >
+                    <td>{{item.date}}</td>
                     <td>{{item.valor}}</td>
                     <td><i class="fa fa-pencil" ng-click="editarGasto(item)"></i></td>
                     <td><i class="fa fa-trash" ng-click="excluirGasto(item)"></i></td>

@@ -1,43 +1,117 @@
-app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state){
+app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state) {
+    var listaGastos;
+    //$scope.listaGastos = {};
+    //$scope.temDados = false;
+    $scope.getInit = function() {
 
-    $scope.addItem = function(item){
-        //console.log("item");
-        //console.log(item);
-        if (typeof arrayGastos === "undefined") {
+        //var dt = $scope.gasto.date;
+        //$scope.gasto.date = new Date(dt);
 
-            item.id = 1;
-            arrayGastos = [item];
-        }else{
-            item.id = arrayGastos.length + 1;
-            arrayGastos.push(item);
-        }
-
-        salvaGastos(arrayGastos);
-    }
-
-    function salvaGastos(arrayGastos){
-        console.log("gastos 1");
-        console.log(arrayGastos);
-        gastos = {"list": arrayGastos};
-
-        console.log("gastos");
-        console.log(JSON.stringify(gastos));
-        var gastoConvertido = JSON.stringify(gastos);
         db.transaction(function(tx) {
 
-            tx.executeSql("INSERT INTO gastos (data) VALUES (?)", [gastoConvertido], successCB, errorCB)
+            tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
+                len = res.rows.length;
+                console.log("tam: " + res.rows.length);
+                if (len > 0) {
+                    for (i = 0; i < len; i++) {
+
+                        listaGastos = JSON.parse(res.rows.item(i).data);
+                        alert("res.rows.item(0).data_num: " + res.rows.item(i).data);
+                    }
+
+                    console.log("listaGastos: " + listaGastos.list);
+
+                    $scope.listaGastos = listaGastos;
+                    setTimeout(function() {
+                        $('#tableGasto').show();
+                    }, 2000);
+                    console.log("$scope.listaGastos 1: " + JSON.stringify($scope.listaGastos));
+                    console.log("$scope.listaGastos.list 1: " + JSON.stringify($scope.listaGastos.list));
+                }
+
+            });
         });
     }
+    $scope.getInit();
+
+    $scope.addItem = function(item) {
+        //console.log("item");
+        //console.log(item);
+        console.log('$scope.listaGastos');
+        console.log($scope.listaGastos);
+        if (typeof $scope.listaGastos === 'undefined') {
+
+            //$scope.listaGastos.list = [];
+            item.id = 1;
+            console.log('if addgasto');
+            $scope.listaGastos = {
+                list: [item]
+            }
+
+        } else {
+            console.log('else addgasto');
+            item.id = $scope.listaGastos.list.length + 1;
+            $scope.listaGastos.list.push(item);
+        }
+        console.log("gastos 1");
+        console.log(JSON.stringify($scope.listaGastos));
+
+        salvaGastos($scope.listaGastos);
+
+    }
+
+    function salvaGastos(gastos) {
+
+        //gastos = {"list": arrayGastos};
+
+        //console.log("gastos");
+        //console.log(JSON.stringify(gastos));
+        var gastoConvertido = JSON.stringify(gastos);
+        if ($scope.listaGastos.list.length > 1) {
+            console.log('length > 1');
+            db.transaction(function(tx) {
+                tx.executeSql("UPDATE gastos SET data=? WHERE id=?", [gastoConvertido, 1], successCB, errorCB)
+            });
+
+        } else {
+            console.log('length = 1');
+            db.transaction(function(tx) {
+                tx.executeSql("INSERT INTO gastos (data) VALUES (?)", [gastoConvertido], successCB, errorCB)
+            });
+        }
+    }
+
+    $scope.limparGastos = function(){
+        db.transaction(function(tx) {
+            tx.executeSql('DROP TABLE gastos');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS gastos (id integer primary key, data text)');
+
+        }, successCB, errorCB);
+
+    }
+
 
     function errorCB(err) {
-        alert("Error processing SQL: "+err.message);
+        alert("Error processing SQL: " + err.message);
     }
 
     function successCB(tx, results) {
-        tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
-                console.log("res.rows.length: " + res.rows.length + " -- should be 1");
-                alert("res.rows.item(0).data_num: " + res.rows.item(0).data + " -- should be 100");
-              });
+        //$scope.getInit();
+        /*tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
+            len = res.rows.length;
+            console.log("res.rows.length: " + res.rows.length);
+            //alert("res.rows.item(0).data_num: " + res.rows.item(0).data + " -- should be 100");
+            for (i = 0; i < len; i++) {
+                listaGastos = JSON.parse(res.rows.item(i).data);
+                alert("res.rows.item(0).data_num: " + res.rows.item(i).data);
+            }
+            console.log("listaGastos: " + listaGastos);
+
+            $scope.listaGastos = listaGastos;
+            console.log("$scope.listaGastos: " + $scope.listaGastos);
+            console.log("$scope.listaGastos.list: " + $scope.listaGastos);
+        });*/
+        $state.go("/");
     }
 
     /*
@@ -101,21 +175,7 @@ app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state){
         $state.go("editaGasto");
     }
 
-    $scope.addItemBanco = function(){
-        db.transaction(function(tx) {
 
-
-           tx.executeSql("INSERT INTO gastos (chave, gasto) VALUES (?,?)", [100, "teste"], function(tx, res) {
-             console.log("insertId: " + res.insertId + " -- probably 1");
-             console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
-
-
-
-           }, function(e) {
-             console.log("ERROR: " + e.message);
-           });
-         });
-    }
 
     */
 });
