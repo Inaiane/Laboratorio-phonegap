@@ -1,4 +1,4 @@
-<div class="container" >
+<div class="container" ng-init="gasto">
   <div class="col-xs-12">
     <h4>Adicionar Gasto</h4>
     <form class="form-horizontal">
@@ -6,7 +6,7 @@
         <div class="form-group">
           <label for="exampleInputEmail1" class="col-xs-3 control-label">Data</label>
           <div class="col-xs-9">
-            <input type="date" class="form-control" ng-model="gasto.date" id="dateGasto" placeholder="Insira a data">
+            <input type="text" class="form-control" ng-model="gasto.date" id="dateGasto" placeholder="Insira a data">
           </div>
         </div>
         <div class="form-group">
@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="pull-right">
-          <button type="button" name="button" class="btn btn-primary" ng-click="addItem(gasto)">Adiciona</button>
+          <button type="button" name="button" class="btn btn-primary" ng-click="updateItem(gasto)">Adiciona</button>
         </div>
       </div>
 

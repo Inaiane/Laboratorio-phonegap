@@ -1,26 +1,38 @@
-<div class="container" ng-init="getInit()">
-    <div class="col-lg-12">
+<div class="container">
+    <div class="col-xs-12">
         <h5>Todos os Gastos</h5>
-        <div class="pull-right">
-            <a ng-click="limparGastos()" class="btn btn-primary btn-sm">Limpar</a>
+
+        <div class="text-center">
+            <a ng-click="getGastos()" class="btn btn-primary" id="btnListar"> Listar Todos Gastos</a>
         </div>
-        <table class="table" id="tableGasto" hidden>
-            <thead>
-                <tr>
-                    <td> Data</td>
-                    <td> Valor gasto</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="item in listaGastos.list" >
-                    <td>{{item.date}}</td>
-                    <td>{{item.valor}}</td>
-                    <td><i class="fa fa-pencil" ng-click="editarGasto(item)"></i></td>
-                    <td><i class="fa fa-trash" ng-click="excluirGasto(item)"></i></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="row " id="panel-gastos" ng-show="temGastos">
+            <div class="pull-right">
+                <a ng-click="limparGastos()" class="btn btn-primary btn-sm">Limpar</a>
+            </div>
+            <div class="col-xs-12">
+                <table class="table" id="tableGasto">
+                    <thead>
+                        <tr>
+                            <td> Data</td>
+                            <td> Valor gasto</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in todosGastos track by $index">
+                            <td>{{item.date}}</td>
+                            <td>{{item.valor}}</td>
+                            <td><i class="fa fa-pencil" ng-click="editar(item)"></i></td>
+                            <td><i class="fa fa-trash" ng-click="deleteItem(item)"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div  class="well" id="well-gastos" hidden>
+
+            <h5 class="text-center">Não há Gastos.</h5>
+        </div>
     </div>
 </div>

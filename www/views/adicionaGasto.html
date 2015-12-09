@@ -1,4 +1,4 @@
-<div class="container" >
+<div class="container" ng-init="gasto.date = ''; gasto.valor = ''">
   <div class="col-xs-12">
     <h5>Adicionar Gasto</h5>
     <form class="form-horizontal">
@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="pull-right">
-          <button type="button" name="button" class="btn btn-primary" ng-click="addItem(gasto, 'adicionar')">Adiciona</button>
+          <button type="button" name="button" class="btn btn-primary" ng-click="addItem(gasto)">Adiciona</button>
         </div>
       </div>
 

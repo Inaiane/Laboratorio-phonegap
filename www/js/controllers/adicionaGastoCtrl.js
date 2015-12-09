@@ -1,116 +1,135 @@
-app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state) {
-    var listaGastos;
-    //$scope.listaGastos = {};
-    //$scope.temDados = false;
-    $scope.getInit = function() {
+app.controller('adicionaGastoCtrl', function($scope, $rootScope, $state, $timeout) {
 
+    var listaGastos;
+    //$scope.temGastos = false;
+
+    $scope.getInit = function() {
         //var dt = $scope.gasto.date;
         //$scope.gasto.date = new Date(dt);
-
-        db.transaction(function(tx) {
-
-            tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
+        db.transaction(function(tx)
+        {
+            tx.executeSql("SELECT * from gastos;", [], function(tx, res)
+            {
                 len = res.rows.length;
                 console.log("tam: " + res.rows.length);
-                if (len > 0) {
-                    for (i = 0; i < len; i++) {
-
+                if (len > 0)
+                {
+                    for (i = 0; i < len; i++)
+                    {
                         listaGastos = JSON.parse(res.rows.item(i).data);
-                        alert("res.rows.item(0).data_num: " + res.rows.item(i).data);
+                        console.log("res.rows.item(0).data_num: " + res.rows.item(i).data);
                     }
-
-                    console.log("listaGastos: " + listaGastos.list);
-
                     $scope.listaGastos = listaGastos;
-                    setTimeout(function() {
-                        $('#tableGasto').show();
-                    }, 2000);
-                    console.log("$scope.listaGastos 1: " + JSON.stringify($scope.listaGastos));
+                    console.log("listaGastos: " + listaGastos.list);
                     console.log("$scope.listaGastos.list 1: " + JSON.stringify($scope.listaGastos.list));
                 }
-
             });
         });
     }
     $scope.getInit();
 
-    $scope.addItem = function(item) {
-        //console.log("item");
-        //console.log(item);
-        console.log('$scope.listaGastos');
-        console.log($scope.listaGastos);
-        if (typeof $scope.listaGastos === 'undefined') {
+    $scope.getGastos = function() {
+        if (typeof $scope.listaGastos !== "undefined")
+        {
+            $scope.todosGastos = $scope.listaGastos.list;
+            $scope.temGastos = true;
+            $("#btnListar").hide();
+            //$("#panel-gastos").show();
+        }else{
+            //$scope.temGastos = false;
+            $("#btnListar").hide();
+            $("#well-gastos").show();
+        }
+    }
 
-            //$scope.listaGastos.list = [];
+    $scope.addItem = function(item) {
+        
+        if (typeof $scope.listaGastos === 'undefined')
+        {
             item.id = 1;
-            console.log('if addgasto');
             $scope.listaGastos = {
                 list: [item]
             }
-
-        } else {
-            console.log('else addgasto');
+        }
+        else
+        {
             item.id = $scope.listaGastos.list.length + 1;
             $scope.listaGastos.list.push(item);
         }
-        console.log("gastos 1");
+        console.log("$scope.listaGastos addItem");
         console.log(JSON.stringify($scope.listaGastos));
 
         salvaGastos($scope.listaGastos);
+    }
 
+    $scope.deleteItem = function(item){
+        var i;
+        for (i = 0; i < $scope.listaGastos.list.length; i++) {
+            if($scope.listaGastos.list[i].id === item.id){
+                $scope.listaGastos.list.splice(i, 1);
+            }
+        }
+        console.log("deleteItem");
+        console.log(JSON.stringify($scope.listaGastos));
+
+        salvaGastos($scope.listaGastos);
+    }
+
+    $scope.editar = function(item){
+        $rootScope.gasto = item;
+        $state.go('editaGasto');
+    }
+
+    $scope.updateItem = function(item){
+        var i;
+
+        for (i = 0; i < $scope.listaGastos.list.length; i++) {
+            if($scope.listaGastos.list[i].id === item.id){
+                $scope.listaGastos.list[i] = item;
+            }
+        }
+        console.log("updateItem");
+        console.log(JSON.stringify($scope.listaGastos));
+
+        salvaGastos($scope.listaGastos);
     }
 
     function salvaGastos(gastos) {
-
-        //gastos = {"list": arrayGastos};
-
-        //console.log("gastos");
-        //console.log(JSON.stringify(gastos));
         var gastoConvertido = JSON.stringify(gastos);
-        if ($scope.listaGastos.list.length > 1) {
-            console.log('length > 1');
+        if ($scope.listaGastos.list.length > 1)
+        {
             db.transaction(function(tx) {
                 tx.executeSql("UPDATE gastos SET data=? WHERE id=?", [gastoConvertido, 1], successCB, errorCB)
             });
-
-        } else {
-            console.log('length = 1');
+        }
+        else if($scope.listaGastos.list.length === 1)
+        {
             db.transaction(function(tx) {
                 tx.executeSql("INSERT INTO gastos (data) VALUES (?)", [gastoConvertido], successCB, errorCB)
             });
         }
+        else{
+            console.log("lista vazia");
+            $scope.limparGastos();
+        }
     }
 
-    $scope.limparGastos = function(){
+    $scope.limparGastos = function() {
         db.transaction(function(tx) {
+
             tx.executeSql('DROP TABLE gastos');
             tx.executeSql('CREATE TABLE IF NOT EXISTS gastos (id integer primary key, data text)');
-
+            console.log("teste");
         }, successCB, errorCB);
-
+        $state.reload();
     }
 
-
     function errorCB(err) {
-        alert("Error processing SQL: " + err.message);
+        console.log("Error processing SQL: " + err);
     }
 
     function successCB(tx, results) {
-        //$scope.getInit();
-        /*tx.executeSql("SELECT * from gastos;", [], function(tx, res) {
-            len = res.rows.length;
-            console.log("res.rows.length: " + res.rows.length);
-            //alert("res.rows.item(0).data_num: " + res.rows.item(0).data + " -- should be 100");
-            for (i = 0; i < len; i++) {
-                listaGastos = JSON.parse(res.rows.item(i).data);
-                alert("res.rows.item(0).data_num: " + res.rows.item(i).data);
-            }
-            console.log("listaGastos: " + listaGastos);
-
-            $scope.listaGastos = listaGastos;
-            console.log("$scope.listaGastos: " + $scope.listaGastos);
-            console.log("$scope.listaGastos.list: " + $scope.listaGastos);
-        });*/
+        console.log("success");
         $state.go("/");
     }
 

@@ -16,11 +16,11 @@ app = angular.module("app", [
     }, errorCB, successCB);
 
     function errorCB(err) {
-        alert("Error processing SQL: " + err.code);
+        console.log("Error processing SQL: " + err.code);
     }
 
     function successCB() {
-        alert("success!");
+        console.log("success!");
     }
 
 })
